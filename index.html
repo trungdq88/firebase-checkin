@@ -31,27 +31,53 @@
           border-radius: 4px;
           margin: 5px;
       }
+
+      #entries {
+          position: absolute;
+          width: 100%;
+          bottom: 50px;
+          top: 0;
+          overflow: auto;
+      }
+      #upload {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          background: #00BCD4;
+          height: 50px;
+          line-height: 55px;
+      }
+      #imageInput {
+          display: none;
+      }
+      label {
+          display: block;
+          color: white;
+          text-align: center;
+          font-weight: bold;
+          height: 50px;
+      }
     </style>
   </head>
   <body>
     <div id="entries"></div>
-    <input id="imageInput" type="file" accept="image/*;capture=camera">
+    <div id="upload">
+      <label>
+      <input id="imageInput" type="file" accept="image/*;capture=camera">
+      ♥ Check me in!
+      </label>
+    </div>
 
     <script>
       function quoteattr(s, preserveCR) {
           preserveCR = preserveCR ? '&#13;' : '\n';
-          return ('' + s) /* Forces the conversion to string. */
-              .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
-              .replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
+          return ('' + s)
+              .replace(/&/g, '&amp;')
+              .replace(/'/g, '&apos;')
               .replace(/"/g, '&quot;')
               .replace(/</g, '&lt;')
               .replace(/>/g, '&gt;')
-              /*
-              You may add other replacements here for HTML only 
-              (but it's not necessary).
-              Or for XML, only if the named entities are defined in its DTD.
-              */ 
-              .replace(/\r\n/g, preserveCR) /* Must be before the next replacement. */
+              .replace(/\r\n/g, preserveCR)
               .replace(/[\r\n]/g, preserveCR);
               ;
       }
@@ -69,7 +95,11 @@
 
       // Add new entry
       function addEntry(username, avatarURL, imageURL) {
-        entries.innerHTML += '<div class="entry"><img class="avatar" src="' + quoteattr(avatarURL) + '"/> <div class="username">' + quoteattr(username) + '</div> <img class="checkin-image" src="' + quoteattr(imageURL) + '"/></div>';
+        entries.innerHTML += '<div class="entry">'
+          + '<img class="avatar" src="' + quoteattr(avatarURL) + '"/>'
+          + '<div class="username">' + quoteattr(username) + '</div>'
+          + '<img class="checkin-image" src="' + quoteattr(imageURL) + '"/>'
+          + '</div>';
       }
       function clearEntries() {
         entries.innerHTML = '';
