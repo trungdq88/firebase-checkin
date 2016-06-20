@@ -1,0 +1,79 @@
+<html>
+  <head>
+    <title>Firebase Example Controller</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+
+      img.checkin-image {
+          width: 100%;
+      }
+
+      img.avatar {
+          float: left;
+          height: 50px;
+      }
+
+      .username {
+          height: 50px;
+          line-height: 50px;
+      }
+
+      .entry {
+          background-color: whitesmoke;
+          padding: 5px;
+          border-radius: 4px;
+          margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="entries"></div>
+    <input id="imageInput" type="file" accept="image/*;capture=camera">
+
+    <script>
+      function quoteattr(s, preserveCR) {
+          preserveCR = preserveCR ? '&#13;' : '\n';
+          return ('' + s) /* Forces the conversion to string. */
+              .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
+              .replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
+              .replace(/"/g, '&quot;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              /*
+              You may add other replacements here for HTML only 
+              (but it's not necessary).
+              Or for XML, only if the named entities are defined in its DTD.
+              */ 
+              .replace(/\r\n/g, preserveCR) /* Must be before the next replacement. */
+              .replace(/[\r\n]/g, preserveCR);
+              ;
+      }
+
+      var imageInput = document.getElementById('imageInput');
+      var entries = document.getElementById('entries');
+
+      // Handle image input
+      function sendPic() {
+        var file = imageInput.files[0];
+        console.log(file);
+      }
+
+      imageInput.addEventListener('change', sendPic, false);
+
+      // Add new entry
+      function addEntry(username, avatarURL, imageURL) {
+        entries.innerHTML += '<div class="entry"><img class="avatar" src="' + quoteattr(avatarURL) + '"/> <div class="username">' + quoteattr(username) + '</div> <img class="checkin-image" src="' + quoteattr(imageURL) + '"/></div>';
+      }
+      function clearEntries() {
+        entries.innerHTML = '';
+      }
+    </script>
+  </body>
+</html>
