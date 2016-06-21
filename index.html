@@ -46,6 +46,23 @@
           background: #00BCD4;
           height: 50px;
           line-height: 55px;
+          overflow: hidden;
+      }
+      #uploading {
+          background: #2196F3;
+          display: none;
+      }
+      #cancelUpload {
+          display: block;
+          float: right;
+          background: #F44336;
+          padding: 0 5px;
+      }
+      #loading {
+          background: #607D8B;
+      }
+      #googleLogin {
+          background: #4CAF50;
       }
       #imageInput {
           display: none;
@@ -62,12 +79,39 @@
   <body>
     <div id="entries"></div>
     <div id="upload">
+      <label id="loading">
+        Loading...
+      </label>
+      <label id="googleLogin">
+        Login with Google
+      </label>
+      <label id="uploading">
+        <span id="txtStatus">
+          Uploading... 0%
+        </span>
+        <span id="cancelUpload">Cancel</span>
+      </label>
       <label>
-      <input id="imageInput" type="file" accept="image/*;capture=camera">
-      ♥ Check me in!
+        <input id="imageInput" type="file" accept="image/*;capture=camera">
+        ♥ Check me in!
       </label>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyCHjukjXJBYpd97wcYxtbpUxN6y-jlfzGY",
+        authDomain: "fir-checkin.firebaseapp.com",
+        databaseURL: "https://fir-checkin.firebaseio.com",
+        storageBucket: "fir-checkin.appspot.com",
+      };
+      firebase.initializeApp(config);
+
+      var storage = firebase.storage();
+      var auth = firebase.auth();
+    </script>
+    
     <script>
       function quoteattr(s, preserveCR) {
           preserveCR = preserveCR ? '&#13;' : '\n';
@@ -84,14 +128,51 @@
 
       var imageInput = document.getElementById('imageInput');
       var entries = document.getElementById('entries');
+      var googleLogin = document.getElementById('googleLogin');
+      var txtStatus = document.getElementById('txtStatus');
+      var loading = document.getElementById('loading');
+      var uploading = document.getElementById('uploading');
+      var cancelUpload = document.getElementById('cancelUpload');
+
+      // Handle login
+      function login() {
+        auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+      }
 
       // Handle image input
       function sendPic() {
+        if (imageInput.files.length === 0) return;
         var file = imageInput.files[0];
-        console.log(file);
+        window.uploadTask = storage.ref().child(file.name).put(file);
+
+        uploading.style.display = 'block';
+        window.uploadTask.on('state_changed', function(snapshot){
+          // Observe state change events such as progress, pause, and resume
+          // See below for more detail
+          var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          txtStatus.innerText = 'Uploading... ' + Math.round(progress) + '%';
+        }, function(error) {
+          // Handle unsuccessful uploads
+          console.log(error);
+        }, function() {
+          // Handle successful uploads on complete
+          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+          var downloadURL = window.uploadTask.snapshot.downloadURL;
+          console.log(downloadURL);
+          txtStatus.innerText = 'You are in, Congrats!';
+          setTimeout(function () {
+            uploading.style.display = 'none';
+          }, 2000);
+        });
       }
 
-      imageInput.addEventListener('change', sendPic, false);
+      function cancel() {
+        window.uploadTask.cancel();
+        txtStatus.innerText = 'Cancelled :-(';
+        setTimeout(function () {
+          uploading.style.display = 'none';
+        }, 2000);
+      }
 
       // Add new entry
       function addEntry(username, avatarURL, imageURL) {
@@ -101,9 +182,29 @@
           + '<img class="checkin-image" src="' + quoteattr(imageURL) + '"/>'
           + '</div>';
       }
+
       function clearEntries() {
         entries.innerHTML = '';
       }
+
+      imageInput.addEventListener('change', sendPic, false);
+      googleLogin.addEventListener('click', login, false);
+      cancelUpload.addEventListener('click', cancel, false);
+
+      auth.onAuthStateChanged(function (user) {
+        if (user !== null)  {
+          console.log('Welcome, ' + user.displayName);
+          googleLogin.style.display = 'none';
+          loading.style.display = 'none';
+        } else {
+          googleLogin.style.display = 'block';
+        }
+      });
+
+      firebase.auth().getRedirectResult().then(() => {
+        loading.style.display = 'none';
+      });
+
     </script>
   </body>
 </html>
