@@ -56,7 +56,7 @@
           display: block;
           float: right;
           background: #F44336;
-          padding: 0 5px;
+          padding: 0 10px;
       }
       #loading {
           background: #607D8B;
@@ -110,6 +110,7 @@
 
       var storage = firebase.storage();
       var auth = firebase.auth();
+      var database = firebase.database();
     </script>
     
     <script>
@@ -142,8 +143,9 @@
       // Handle image input
       function sendPic() {
         if (imageInput.files.length === 0) return;
+        var user = auth.currentUser;
         var file = imageInput.files[0];
-        window.uploadTask = storage.ref().child(file.name).put(file);
+        window.uploadTask = storage.ref().child(user.uid + file.name).put(file);
 
         uploading.style.display = 'block';
         window.uploadTask.on('state_changed', function(snapshot){
@@ -158,12 +160,20 @@
           // Handle successful uploads on complete
           // For instance, get the download URL: https://firebasestorage.googleapis.com/...
           var downloadURL = window.uploadTask.snapshot.downloadURL;
-          console.log(downloadURL);
-          txtStatus.innerText = 'You are in, Congrats!';
-          setTimeout(function () {
-            uploading.style.display = 'none';
-          }, 2000);
+          postEntry(user.uid, user.displayName, user.photoURL, downloadURL);
         });
+      }
+
+      function postEntry(uid, name, avatar, image) {
+        database.ref('entries/' + uid).update({
+          name: name,
+          avatar: avatar,
+          image: image,
+        });
+        txtStatus.innerText = 'You are in, Congrats!';
+        setTimeout(function () {
+          uploading.style.display = 'none';
+        }, 2000);
       }
 
       function cancel() {
