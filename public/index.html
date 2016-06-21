@@ -10,32 +10,27 @@
         padding: 0;
         font-family: sans-serif;
       }
-
       img.checkin-image {
           width: 100%;
           min-height: 200px;
           background: #9E9E9E;
           margin-top: 5px;
       }
-
       img.avatar {
           float: left;
           height: 50px;
       }
-
       .username {
           height: 50px;
           line-height: 50px;
           margin-left: 60px;
       }
-
       .entry {
           background-color: whitesmoke;
           padding: 5px;
           border-radius: 4px;
           margin: 5px;
       }
-
       #entries {
           position: absolute;
           width: 100%;
@@ -218,11 +213,11 @@
         }
       });
 
-      firebase.auth().getRedirectResult().then(() => {
+      firebase.auth().getRedirectResult().then(function () {
         loading.style.display = 'none';
       });
 
-      firebase.database().ref('entries').on('value', entriesData => {
+      firebase.database().ref('entries').on('value', function (entriesData) {
         var data = entriesData.val();
         if (data === null) {
           entries.innerHTML = '<p>No one checked in yet!</p>';
