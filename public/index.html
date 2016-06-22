@@ -101,21 +101,8 @@
 
     <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
     <script>
-      // Initialize Firebase
-      var config = {
-        apiKey: "AIzaSyCHjukjXJBYpd97wcYxtbpUxN6y-jlfzGY",
-        authDomain: "fir-checkin.firebaseapp.com",
-        databaseURL: "https://fir-checkin.firebaseio.com",
-        storageBucket: "fir-checkin.appspot.com",
-      };
-      firebase.initializeApp(config);
 
-      var storage = firebase.storage();
-      var auth = firebase.auth();
-      var database = firebase.database();
-    </script>
-    
-    <script>
+      // Helper function
       function quoteattr(s, preserveCR) {
           preserveCR = preserveCR ? '&#13;' : '\n';
           return ('' + s)
@@ -128,6 +115,19 @@
               .replace(/[\r\n]/g, preserveCR);
               ;
       }
+
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyCHjukjXJBYpd97wcYxtbpUxN6y-jlfzGY",
+        authDomain: "fir-checkin.firebaseapp.com",
+        databaseURL: "https://fir-checkin.firebaseio.com",
+        storageBucket: "fir-checkin.appspot.com",
+      };
+      firebase.initializeApp(config);
+
+      var storage = firebase.storage();
+      var auth = firebase.auth();
+      var database = firebase.database();
 
       var imageInput = document.getElementById('imageInput');
       var entries = document.getElementById('entries');
@@ -193,10 +193,6 @@
           + '<div class="username">' + quoteattr(username) + '</div>'
           + '<img class="checkin-image" src="' + quoteattr(imageURL) + '"/>'
           + '</div>';
-      }
-
-      function clearEntries() {
-        entries.innerHTML = '';
       }
 
       imageInput.addEventListener('change', sendPic, false);
