@@ -9,4 +9,6 @@ This is an project to demonstrate Firebase features:
 - Storage
 - Hosting
 
+Live demo: https://fir-checkin.firebaseapp.com/ (should be visited on mobile or tablet)
+
 Slide: http://bit.ly/firebase-for-web-apps
